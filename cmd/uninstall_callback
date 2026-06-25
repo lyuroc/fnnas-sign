@@ -1,0 +1,4 @@
+#!/bin/bash
+# 卸载完成
+echo "飞牛论坛打卡已卸载" > "${TRIM_TEMP_LOGFILE}"
+exit 0

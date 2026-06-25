@@ -1,0 +1,4 @@
+#!/bin/bash
+# 升级后处理
+echo "✅ 升级完成，配置和数据已保留" > "${TRIM_TEMP_LOGFILE}"
+exit 0

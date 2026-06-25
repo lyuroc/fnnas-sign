@@ -1,0 +1,8 @@
+#!/bin/bash
+# 升级前：停止服务
+if [ -f "${TRIM_PKGTMP}/app.pid" ]; then
+    PID=$(cat "${TRIM_PKGTMP}/app.pid" | tr -d '[:space:]')
+    kill $PID 2>/dev/null || true
+    sleep 1
+fi
+exit 0

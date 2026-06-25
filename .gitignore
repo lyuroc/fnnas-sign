@@ -1,0 +1,8 @@
+app/data/
+app/server/__pycache__/
+*.new
+tooltip-debug.css
+dev-server.*
+inspect_bundle.py
+tooltip_extract.js
+ComponentPage.*
