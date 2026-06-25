@@ -1,0 +1,16 @@
+{
+  ".url": {
+    "fnnas-sign.main": {
+      "title": "飞牛论坛打卡",
+      "icon": "images/icon_{0}.png",
+      "type": "iframe",
+      "protocol": "http",
+      "port": "7654",
+      "url": "/",
+      "allUsers": false,
+      "control": {
+        "accessPerm": "editable"
+      }
+    }
+  }
+}

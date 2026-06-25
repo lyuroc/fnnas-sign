@@ -1,0 +1,8 @@
+#!/bin/bash
+ERR_LOG="${TRIM_TEMP_LOGFILE:-/tmp/fnnas-cb.log}"
+echo "=== 安装后处理 ===" > "$ERR_LOG"
+if [ -n "$TRIM_PKGVAR" ]; then
+    echo "7654" > "${TRIM_PKGVAR}/port.txt" 2>/dev/null || true
+fi
+echo "✅ 安装完成！请在桌面打开【飞牛论坛打卡】配置。" > "$ERR_LOG"
+exit 0

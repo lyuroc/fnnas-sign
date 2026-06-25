@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>飞牛论坛打卡</title>
+<link rel="stylesheet" href="animal-ui.css?v=4">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--animal-font-family);color:var(--animal-text-color);font-size:16px;line-height:1.6;overflow:hidden;height:100vh}
+#root{height:100vh;display:flex;align-items:center;justify-content:center;padding:32px 20px;background:url(home_bg.webp) 0 0 / auto repeat,#7DC395;overflow:hidden;scrollbar-gutter:auto;animation:bgScroll 80s linear infinite}
+@keyframes bgScroll{0%{background-position:100% 0}to{background-position:0 100%}}
+@keyframes float{0%,to{transform:translateY(0) rotate(0)}50%{transform:translateY(-6px) rotate(8deg)}}
+@media(max-width:860px){#root{align-items:flex-start!important;justify-content:center!important;padding-top:32px!important;padding-left:0px!important;padding-right:0px!important;overflow:auto!important}.card-wedding{flex-direction:column!important;max-height:none!important;max-width:none!important;overflow:visible!important;width:100%!important;padding:10px;margin:0 auto!important}.card-env{flex-direction:column!important;gap:10px;min-height:0!important}.invite-card,.settings-card{max-height:none!important;min-height:auto!important;flex:1 1 auto!important}.invite-card{overflow:hidden!important}.settings-card{overflow:visible!important}}
+.card-wedding{min-height:480px;max-width:900px;max-height:calc(100vh - 80px);margin:0 auto;border-radius:24px;background:#fff;padding:16px;box-shadow:0 0 0 2px #725d421f,0 10px 24px rgba(61,52,40,.18);display:flex;flex-direction:column;overflow:hidden}
+.card-env{display:flex;flex-direction:row;gap:16px;flex:1;min-height:0}
+.invite-card{scrollbar-width:none;-webkit-overflow-scrolling:touch;flex:1;position:relative;background:radial-gradient(circle at 20% 10%,rgba(248,166,178,.18),transparent 40%),radial-gradient(circle at 80% 90%,rgba(138,198,138,.18),transparent 40%),url(assets/animalisland_1440_2560-BCaDD2qX.jpg) center top / 150% auto no-repeat,#f7f3df;border-radius:28px 26px 30px 28px/26px 30px 28px 26px;box-shadow:0 4px #725d422e,inset 0 0 0 2px #725d422e;padding:20px 22px;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.invite-card::before{content:"";position:absolute;top:12px;left:12px;right:12px;height:calc(100% - 24px);border-radius:20px;background:radial-gradient(circle,rgba(114,93,66,.08) 1px,transparent 1.5px) 0 0 / 14px 14px;pointer-events:none;z-index:0}
+.invite-card::after{content:"";position:absolute;top:16px;left:16px;right:16px;height:calc(100% - 32px);border:1.5px dashed rgba(114,93,66,.3);border-radius:20px;pointer-events:none;z-index:0}
+.invite-card::-webkit-scrollbar{display:none}.invite-scroll{display:flex;flex-direction:column;align-items:center;flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}.invite-scroll::-webkit-scrollbar{display:none}
+.invite-card>*{position:relative;z-index:1}
+.settings-card{flex:1;background:#F8F4E8;border-radius:20px;padding:20px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;font-size:14px;line-height:1.7;color:#725d42;min-width:0}
+.settings-card::-webkit-scrollbar{display:none}
+.sdiv{width:100%;height:1px;background:rgba(196,184,158,.3);margin:8px 0;flex-shrink:0}
+.gd{width:100%;display:flex;flex-direction:column;gap:3px;font-size:14px}
+.gi{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid rgba(232,220,200,.5)}
+.gi .gl{opacity:.85;color:#725d42}.gi .gv{font-weight:700;color:#725d42}
+.tipc{padding:5px 12px;border-radius:50px;font-size:14px;display:flex;align-items:center;gap:8px;background:#f0e8d8;color:#725d42;width:100%}
+.toast{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);background:#794f27;color:#f8f8f0;padding:10px 24px;border-radius:50px;font-size:14px;font-weight:600;z-index:9999;pointer-events:none;transition:opacity .25s;box-shadow:0 8px 24px rgba(0,0,0,.14)}
+
+
+/* Select 下拉选中态修复：做成示例里“文字后方短椭圆”效果 */
+.animal-option-GEkLI{width:max-content;max-width:calc(100% - 24px);margin:0 auto;padding:12px 24px!important;justify-content:center;text-align:center}
+.animal-option-GEkLI[aria-selected="true"],.animal-option-GEkLI.animal-active-jtSpt{position:relative;font-weight:700!important;isolation:isolate}
+.animal-option-GEkLI[aria-selected="true"]::after,.animal-option-GEkLI.animal-active-jtSpt::after{content:"";position:absolute;left:4px;right:4px;top:58%;transform:translateY(-30%);height:14px;background:#ffe46f;border:none;border-radius:999px;box-shadow:none;z-index:-1;pointer-events:none}
+/* 禁用内置宽条，避免和短椭圆叠加 */
+.animal-option-GEkLI .animal-pillBar-O9cTb{display:none!important}
+/* BGM图标浮动动画 */
+@keyframes bgmFloat{0%,to{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.bgm-float{animation:bgmFloat 3s ease-in-out infinite;display:inline-flex}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>document.documentElement.style.cursor="url(./files/cursor-icon.1ea93a65.png) 4 0,default"</script>
+<script src="react.min.js"></script>
+<script src="react-dom.min.js"></script>
+<script>
+var module = {exports: {}};
+var exports = module.exports;
+var require = function(name) {
+  if (name === 'react') return React;
+  if (name === 'react-dom') return ReactDOM;
+  if (name === 'react/jsx-runtime') return {jsx: React.createElement, jsxs: React.createElement, Fragment: React.Fragment};
+  if (name === 'classnames') return function(...a){
+    const out=[];
+    const push=(v)=>{
+      if(!v)return;
+      if(typeof v==='string'||typeof v==='number'){out.push(String(v));return}
+      if(Array.isArray(v)){v.forEach(push);return}
+      if(typeof v==='object'){Object.keys(v).forEach(k=>{if(v[k])out.push(k)})}
+    };
+    a.forEach(push);
+    return out.join(' ');
+  };
+  return '';
+};
+</script>
+<script src="animal-ui.cjs?v=4"></script>
+<script>
+const AI = module.exports;
+const{createElement:_ce,useState,useEffect,useMemo,useRef}=React;
+const{createRoot}=ReactDOM;
+const smD={'smtp.qq.com':{p:465,s:true},'smtp.163.com':{p:465,s:true},'smtp.126.com':{p:465,s:true},'smtp.mail.yahoo.com':{p:465,s:true},'smtp-mail.outlook.com':{p:587,s:false},'smtp.gmail.com':{p:587,s:false}};
+const sOpts=[{label:'QQ邮箱 (smtp.qq.com)',key:'smtp.qq.com'},{label:'网易163 (smtp.163.com)',key:'smtp.163.com'},{label:'网易126 (smtp.126.com)',key:'smtp.126.com'},{label:'Hotmail/Outlook',key:'smtp-mail.outlook.com'},{label:'Google Gmail',key:'smtp.gmail.com'}];
+
+function App(){
+  const[sn,snSet]=useState(false);const[sv,svSet]=useState(false);const[te,teSet]=useState(false);const[rf,rfSet]=useState(false);
+  const[ct,ctSet]=useState('');const[ns,nsSet]=useState('--:--');const[tm,tmSet]=useState({h:0,m:0,w:'',md:''});const[bgmOn,bgmSet]=useState(true);const[bgmPos,bgpSet]=useState({x:32,y:32});const bgmRef=useRef(null);const posRef=useRef({x:32,y:32});
+  const[tst,tstSet]=useState({s:false,m:''});const[lo,loSet]=useState('loading');
+  const[f,setF]=useState({sh:8,sm:0,eh:22,em:0,saltkey:'',auth:'',wx:true,qq:true,eml:false,wh_wx:'http://127.0.0.1:8644/webhooks/fnnas-sign-wechat',wh_qq:'http://127.0.0.1:8644/webhooks/fnnas-sign-qq',wsec:'',smtp:'smtp.qq.com',smtpp:465,smtps:true,su:'',spw:'',ne:'',wcid:'',qcid:'',bgmX:32,bgmY:32});
+  const[ifo,ifoSet]=useState({});const[sti,stiSet]=useState({tt:'--:--',ts:false});
+  const stiR=useRef(sti);stiR.current=sti;
+  const clickRef=useRef({count:0,time:0});
+  function tgBgm(){const n=!bgmOn;bgmSet(n);if(bgmRef.current){if(n){var p=bgmRef.current.play();if(p&&typeof p.catch==='function'){p.catch(function(){})}}else bgmRef.current.pause()}var b={...f,bgm_enabled:n};api('/api/config',{method:'POST',body:JSON.stringify(b)}).catch(function(){})}
+  function drStart(e){e.preventDefault();var t=e.touches?e.touches[0]:e;var st={x:window.innerWidth-t.clientX-bgmPos.x,y:t.clientY-bgmPos.y};function mv(m){m.preventDefault();var p=m.touches?m.touches[0]:m;var nx=window.innerWidth-p.clientX-st.x,ny=p.clientY-st.y;bgpSet({x:nx,y:ny});posRef.current={x:nx,y:ny}}function me(){document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',me);up('bgmX',posRef.current.x);up('bgmY',posRef.current.y);var bx=posRef.current.x,by=posRef.current.y;var b={...f,bgm_pos_x:bx,bgm_pos_y:by};api('/api/config',{method:'POST',body:JSON.stringify(b)}).catch(function(){})}document.addEventListener('pointermove',mv);document.addEventListener('pointerup',me)}
+  function handleTripleClick(){
+    const now=Date.now();
+    if(now-clickRef.current.time>1000){clickRef.current={count:1,time:now}}
+    else{clickRef.current.count++;clickRef.current.time=now;if(clickRef.current.count>=3){clickRef.current.count=0;ms()}}
+  }
+  useEffect(function(){function rc(){bgpSet(function(p){var mw=window.innerWidth-50,mh=window.innerHeight-50;return{x:Math.min(p.x,mw),y:Math.min(p.y,mh)}})}window.addEventListener('resize',rc);rc();return function(){window.removeEventListener('resize',rc)}},[]);useEffect(()=>{lc();li();fs();const i1=setInterval(()=>{li();fs()},60000);const i2=setInterval(()=>{const d=new Date();ctSet(fmt(d));const tt=stiR.current.tt;if(tt&&tt!=='--:--'){const p=tt.split(':');const t=new Date(d.getFullYear(),d.getMonth(),d.getDate(),+p[0],+p[1]);if(t<=d)t.setDate(t.getDate()+1);nsSet(fmt(t))}else nsSet('--:--');const d2=new Date();tmSet({h:d2.getHours(),m:d2.getMinutes(),w:'星期'+['日','一','二','三','四','五','六'][d2.getDay()],md:(d2.getMonth()+1)+'月'+d2.getDate()+'日'})},1000);const t1=setTimeout(()=>loSet('closing'),800);const t2=setTimeout(()=>loSet('done'),1800);return()=>{clearInterval(i1);clearInterval(i2);clearTimeout(t1);clearTimeout(t2)}},[]);
+  const API_BASE=(location.port==='5500'||location.port==='5501')?'http://127.0.0.1:7654':'';
+  function api(u,o={}){const url=/^https?:\/\//.test(u)?u:(API_BASE+u);return fetch(url,{headers:{'Content-Type':'application/json',...o.headers},...o}).then(async r=>{const t=await r.text();let j;try{j=t?JSON.parse(t):{}}catch(_){throw new Error('接口返回不是JSON: '+url)}if(!r.ok)throw new Error((j&&j.msg)||('HTTP '+r.status));return j})}
+  function lc(){api('/api/config').then(r=>{if(r.code===0&&r.data){const n={...f},m={cookie_saltkey:'saltkey',cookie_auth:'auth',enable_wechat:'wx',enable_qq:'qq',enable_email:'eml',webhook_url_wechat:'wh_wx',webhook_url_qq:'wh_qq',webhook_secret:'wsec',smtp_server:'smtp',smtp_port:'smtpp',smtp_ssl:'smtps',smtp_user:'su',smtp_password:'spw',notify_email:'ne',sign_start_hour:'sh',sign_end_hour:'eh',wechat_chat_id:'wcid',qq_chat_id:'qcid',bgm_enabled:'bgm',bgm_pos_x:'bgmX',bgm_pos_y:'bgmY'};Object.keys(m).forEach(k=>{if(r.data[k]!==undefined)n[m[k]]=r.data[k]});if(r.data.sign_start_minute!==undefined)n.sm=r.data.sign_start_minute;if(r.data.sign_end_minute!==undefined)n.em=r.data.sign_end_minute;setF(n);if(r.data.bgm_pos_x!==undefined)bgpSet({x:r.data.bgm_pos_x,y:r.data.bgm_pos_y||32});if(r.data.bgm_enabled!==undefined){bgmSet(r.data.bgm_enabled);if(bgmRef.current){if(r.data.bgm_enabled){var p=bgmRef.current.play();if(p&&typeof p.catch==='function'){p.catch(function(){})}}else bgmRef.current.pause()}};posRef.current={x:r.data.bgm_pos_x||32,y:r.data.bgm_pos_y||32};bgpSet(function(p){var mw=typeof window!=='undefined'?window.innerWidth-50:700,mh=typeof window!=='undefined'?window.innerHeight-50:700;return{x:p.x,y:Math.min(p.y,mh)}})}}).catch(()=>{})}
+  function li(){api('/api/latest-info',{cache:'no-store'}).then(r=>{if(r.code===0&&r.data)ifoSet(r.data)}).catch(()=>{})}
+  function fs(){api('/api/status').then(r=>{if(r.code===0&&r.data){const d=r.data;stiSet({tt:d.today_target_time||'--:--',ts:d.today_signed||false})}}).catch(()=>{})}
+  function st(m){tstSet({s:true,m});setTimeout(()=>tstSet({s:false,m:''}),1500)}
+  function up(k,v){setF(p=>({...p,[k]:v}))}
+  function tg(k,e){
+    if(e){e.preventDefault();}
+    setF(p=>({...p,[k]:!p[k]}));
+  }
+  function sw(k){
+    return (v,e)=>{
+      setF(p=>{
+        const cur=!!p[k];
+        const nv=typeof v==='boolean'?v:(typeof e==='boolean'?e:(v&&v.target&&typeof v.target.checked==='boolean'?v.target.checked:cur?false:true));
+        return {...p,[k]:!!nv};
+      });
+    };
+  }
+  function save(){svSet(true);const m={saltkey:'cookie_saltkey',auth:'cookie_auth',wx:'enable_wechat',qq:'enable_qq',eml:'enable_email',wh_wx:'webhook_url_wechat',wh_qq:'webhook_url_qq',wsec:'webhook_secret',smtp:'smtp_server',smtpp:'smtp_port',smtps:'smtp_ssl',su:'smtp_user',spw:'smtp_password',ne:'notify_email',sh:'sign_start_hour',eh:'sign_end_hour',wcid:'wechat_chat_id',qcid:'qq_chat_id',bgm:'bgm_enabled',bgmX:'bgm_pos_x',bgmY:'bgm_pos_y'},body={sign_start_minute:f.sm,sign_end_minute:f.em};Object.keys(m).forEach(k=>{body[m[k]]=f[k]});api('/api/config',{method:'POST',body:JSON.stringify(body)}).then(r=>st(r.code===0?'已保存':(r.msg||'保存失败'))).catch(()=>st('网络错误')).finally(()=>svSet(false))}
+  function ms(){snSet(true);api('/api/sign-now',{method:'POST'}).then(r=>{if(r.code===0){st(r.data.message||'打卡成功');li();fs()}else st(r.msg||'打卡失败')}).catch(()=>st('网络错误')).finally(()=>snSet(false))}
+  function te2(){teSet(true);api('/api/test-email',{method:'POST',body:JSON.stringify(f)}).then(r=>st(r.msg||(r.code===0?'发送成功':'发送失败'))).catch(()=>st('网络错误')).finally(()=>teSet(false))}
+  function rt(){rfSet(true);api('/api/reload',{method:'POST'}).then(()=>fs()).catch(()=>{}).finally(()=>rfSet(false))}
+  function fmt(d){return d.getFullYear()+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0')}
+  const emailSt=useMemo(()=>{if(!f.su)return'';const re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;if(!re.test(f.su))return'error';if(!f.smtp)return;const d=(f.su.split('@')[1]||'').toLowerCase();const mp={'smtp.qq.com':['qq.com'],'smtp.163.com':['163.com'],'smtp.126.com':['126.com'],'smtp.mail.yahoo.com':['yahoo.com'],'smtp-mail.outlook.com':['outlook.com','hotmail.com'],'smtp.gmail.com':['gmail.com']};const dm=mp[f.smtp];if(!dm)return'';return dm.some(x=>d.endsWith(x))?'':'warning'},[f.smtp,f.su]);
+  const emailTip={error:'邮箱格式输入错误',warning:'域名与SMTP服务商不匹配','':'发件邮箱地址'};const neSt=useMemo(()=>{if(!f.ne)return'';const re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;return re.test(f.ne)?'':'error'},[f.ne]);const emailTip2={error:'邮箱格式输入错误','':'收件邮箱地址'};const items=[['recent_checkin','最近打卡'],['monthly_days','本月打卡'],['continuous_days','连续打卡'],['total_days','累计打卡'],['total_reward','累计奖励'],['recent_reward','最近奖励'],['level','打卡等级']];
+  const hrs=Array.from({length:24},(_,i)=>i);
+
+  useEffect(()=>{if(!bgmRef.current)return;bgmRef.current.volume=0.3;if(bgmOn){var p=bgmRef.current.play();p&&typeof p.catch==='function'&&p.catch(function(){})}else bgmRef.current.pause()},[bgmOn]);
+
+  const cl=lo==='closing';const isLd=lo==='loading';
+
+  return _ce(AI.Cursor,{forceAll:true},
+    _ce('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',width:'100%',flex:1,position:'relative'}},
+    _ce('div',{className:'card-wedding'},
+      _ce('div',{className:'card-env'},
+        // 左卡片
+        _ce('div',{className:'invite-card'},
+          // 浮动装饰 - 粉色花朵(右上)
+          _ce('span',{style:{position:'absolute',zIndex:3,pointerEvents:'none',top:'32px',right:'22px',filter:'drop-shadow(0 2px 2px rgba(61,52,40,.12))',animation:'float 3.5s ease-in-out infinite'}},
+            _ce('svg',{viewBox:'0 0 40 40',width:34,height:34,'aria-hidden':true},
+              _ce('ellipse',{cx:20,cy:8,rx:6,ry:9,fill:'#f8a6b2',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(0 20 20)'}),
+              _ce('ellipse',{cx:20,cy:8,rx:6,ry:9,fill:'#f8a6b2',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(72 20 20)'}),
+              _ce('ellipse',{cx:20,cy:8,rx:6,ry:9,fill:'#f8a6b2',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(144 20 20)'}),
+              _ce('ellipse',{cx:20,cy:8,rx:6,ry:9,fill:'#f8a6b2',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(216 20 20)'}),
+              _ce('ellipse',{cx:20,cy:8,rx:6,ry:9,fill:'#f8a6b2',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(288 20 20)'}),
+              _ce('circle',{cx:20,cy:20,r:4.5,fill:'#f7cd67',stroke:'#725d42',strokeWidth:1.2})
+            )
+          ),
+          // 浮动装饰 - 金色星星(左)
+          _ce('span',{style:{position:'absolute',zIndex:3,pointerEvents:'none',top:'115px',left:'8px',filter:'drop-shadow(0 2px 2px rgba(61,52,40,.12))',animation:'float 4s ease-in-out infinite',animationDelay:'0.6s'}},
+            _ce('svg',{viewBox:'0 0 24 24',width:24,height:24,'aria-hidden':true},
+              _ce('path',{d:'M12 2L14.5 9L22 9.5L16 14.5L18 22L12 17.5L6 22L8 14.5L2 9.5L9.5 9Z',fill:'#f7cd67',stroke:'#725d42',strokeWidth:1.4,strokeLinejoin:'round'})
+            )
+          ),
+          // 浮动装饰 - 黄色花朵(右下)
+          _ce('span',{style:{position:'absolute',zIndex:3,pointerEvents:'none',bottom:'80px',right:'14px',filter:'drop-shadow(0 2px 2px rgba(61,52,40,.12))',animation:'float 3s ease-in-out infinite',animationDelay:'1.2s'}},
+            _ce('svg',{viewBox:'0 0 40 40',width:28,height:28,'aria-hidden':true},
+              _ce('ellipse',{cx:20,cy:8,rx:5,ry:8,fill:'#f7e05e',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(0 20 20)'}),
+              _ce('ellipse',{cx:20,cy:8,rx:5,ry:8,fill:'#f7e05e',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(72 20 20)'}),
+              _ce('ellipse',{cx:20,cy:8,rx:5,ry:8,fill:'#f7e05e',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(144 20 20)'}),
+              _ce('ellipse',{cx:20,cy:8,rx:5,ry:8,fill:'#f7e05e',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(216 20 20)'}),
+              _ce('ellipse',{cx:20,cy:8,rx:5,ry:8,fill:'#f7e05e',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(288 20 20)'}),
+              _ce('circle',{cx:20,cy:20,r:4,fill:'#cc8b3c',stroke:'#725d42',strokeWidth:1.2})
+            )
+          ),
+          // 浮动装饰 - 紫色花朵(左下)
+          _ce('span',{style:{position:'absolute',zIndex:3,pointerEvents:'none',bottom:'130px',left:'22px',filter:'drop-shadow(0 2px 2px rgba(61,52,40,.12))',animation:'float 4.5s ease-in-out infinite',animationDelay:'0.3s'}},
+            _ce('svg',{viewBox:'0 0 40 40',width:30,height:30,'aria-hidden':true},
+              _ce('ellipse',{cx:20,cy:8,rx:5,ry:8,fill:'#b77dee',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(0 20 20)'}),
+              _ce('ellipse',{cx:20,cy:8,rx:5,ry:8,fill:'#b77dee',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(72 20 20)'}),
+              _ce('ellipse',{cx:20,cy:8,rx:5,ry:8,fill:'#b77dee',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(144 20 20)'}),
+              _ce('ellipse',{cx:20,cy:8,rx:5,ry:8,fill:'#b77dee',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(216 20 20)'}),
+              _ce('ellipse',{cx:20,cy:8,rx:5,ry:8,fill:'#b77dee',stroke:'#725d42',strokeWidth:1.2,transform:'rotate(288 20 20)'}),
+              _ce('circle',{cx:20,cy:20,r:4,fill:'#f7cd67',stroke:'#725d42',strokeWidth:1.2})
+            )
+          ),
+          // 角落叶子
+          _ce('div',{style:{position:'absolute',top:-10,left:-10,transform:'rotate(-25deg)',zIndex:2,pointerEvents:'none',filter:'drop-shadow(0 2px 3px rgba(61,52,40,.15))'}},
+            _ce('svg',{viewBox:'0 0 64 64',width:38,height:38,'aria-hidden':true},
+              _ce('path',{d:'M8 56 C 8 24, 32 4, 60 6 C 58 36, 38 58, 8 56 Z',fill:'#8ac68a',stroke:'#3d5a1a',strokeWidth:2.5,strokeLinejoin:'round'}),
+              _ce('path',{d:'M14 50 C 26 40, 40 26, 56 12',stroke:'#3d5a1a',strokeWidth:2,fill:'none',strokeLinecap:'round'}),
+              _ce('path',{d:'M22 42 C 28 38, 32 34, 36 30',stroke:'#3d5a1a',strokeWidth:1.4,fill:'none',strokeLinecap:'round'}),
+              _ce('path',{d:'M30 48 C 34 44, 38 40, 42 36',stroke:'#3d5a1a',strokeWidth:1.4,fill:'none',strokeLinecap:'round'})
+            )
+          ),
+          _ce('div',{style:{position:'absolute',top:-10,right:-10,transform:'rotate(115deg) scaleX(-1)',zIndex:2,pointerEvents:'none',filter:'drop-shadow(0 2px 3px rgba(61,52,40,.15))'}},
+            _ce('svg',{viewBox:'0 0 64 64',width:38,height:38,'aria-hidden':true},
+              _ce('path',{d:'M8 56 C 8 24, 32 4, 60 6 C 58 36, 38 58, 8 56 Z',fill:'#8ac68a',stroke:'#3d5a1a',strokeWidth:2.5,strokeLinejoin:'round'}),
+              _ce('path',{d:'M14 50 C 26 40, 40 26, 56 12',stroke:'#3d5a1a',strokeWidth:2,fill:'none',strokeLinecap:'round'}),
+              _ce('path',{d:'M22 42 C 28 38, 32 34, 36 30',stroke:'#3d5a1a',strokeWidth:1.4,fill:'none',strokeLinecap:'round'}),
+              _ce('path',{d:'M30 48 C 34 44, 38 40, 42 36',stroke:'#3d5a1a',strokeWidth:1.4,fill:'none',strokeLinecap:'round'})
+            )
+          ),
+          // 标题图片
+          _ce('div',{className:'invite-scroll',style:{flex:1,overflowY:'auto',scrollbarWidth:'none'}},
+            _ce('img',{src:'assets/wedding-DE_0d_gq.webp',alt:'打卡啦！飞牛森友会',style:{display:'block',width:'100%',maxWidth:260,margin:'12px auto 24px',position:'relative',zIndex:1}}),
+          // 时间控件
+          _ce(AI.Tooltip,{variant:'island',bordered:true,title:'连续点击三次可手动打卡'},
+            _ce('div',{onClick:handleTripleClick,style:{cursor:'pointer',margin:'0px auto 0',alignSelf:'center',width:'fit-content'}},
+              _ce('div',{className:'animal-acDatetime-hVKh7',style:{transform:'scale(.9)',transformOrigin:'center center'}},
+                _ce('div',{className:'animal-acDate-rhO3k',style:{display:'flex',whiteSpace:'nowrap',justifyContent:'center',textAlign:'center'}},
+                  _ce('span',{className:'animal-acWeekday-bxDHR',style:{fontSize:20}},tm.w),
+                  _ce('span',{className:'animal-acMonthday-1jUmX',style:{fontSize:20}},tm.md)
+                ),
+                _ce('div',{className:'animal-acTime-S-twb',style:{textAlign:'center'}},
+                  _ce('span',null,String(tm.h).padStart(2,'0')),
+                  _ce('span',{className:'animal-acColon-g4vuJ'},':'),
+                  _ce('span',null,String(tm.m).padStart(2,'0'))
+                )
+              )
+            )
+          ),
+          _ce('div',{style:{flex:1}}),
+          _ce('div',{style:{fontSize:14,fontWeight:700,color:'#725d42',marginBottom:10,textAlign:'left',width:'100%'}},'最近打卡记录'),
+          _ce('div',{className:'gd'},items.map(([k,l])=>_ce('div',{className:'gi',key:k},_ce('span',{className:'gl'},l),_ce('span',{className:'gv'},ifo[k]||'--')))),
+          _ce('div',{style:{height:8}}),
+          _ce('button',{style:{position:'relative',zIndex:1,border:'none',background:'transparent',cursor:'pointer',fontSize:11,color:'#9f927d',textAlign:'center',padding:'2px 0',fontWeight:500,marginBottom:8},onClick:()=>window.open('https://b23.tv/qHNd6t5','_blank')},'2026 @ LyuRoc.HarvestMoon Group Co., Ltd.')
+        )
+        ),
+        // 右卡片
+        _ce('div',{className:'settings-card'},
+          _ce('div',{style:{fontSize:16,fontWeight:900,color:'#725d42',marginBottom:10}},'论坛Cookie'),
+          _ce('div',{style:{fontSize:12,fontWeight:600,color:'#725d42',marginBottom:3}},'pvRK_2132_auth'),
+          _ce(AI.Tooltip,{variant:'island',bordered:true,title:'①登录 club.fnnas.com\n ②按F12打开开发者工具\n ③点击"应用程序"→"Cookies"\n ④复制 pvRK_2132_auth 的值'},
+            _ce(AI.Input,{value:f.auth||'',onChange:e=>up('auth',e.target.value),placeholder:'复制pvRK_2132_auth的值',style:{width:'100%'},name:'auth'})
+          ),
+          _ce('div',{style:{height:8,overflow:'hidden',flexShrink:0}}),
+          _ce('div',{style:{fontSize:12,fontWeight:600,color:'#725d42',marginBottom:3}},'pvRK_2132_saltkey'),
+          _ce(AI.Tooltip,{variant:'island',bordered:true,title:'①登录 club.fnnas.com\n ②按F12打开开发者工具\n ③点击"应用程序"→"Cookies"\n ④复制 pvRK_2132_saltkey 的值'},
+            _ce(AI.Input,{value:f.saltkey||'',onChange:e=>up('saltkey',e.target.value),placeholder:'复制pvRK_2132_saltkey的值',style:{width:'100%'},name:'saltkey'})
+          ),
+          _ce('div',{style:{height:16,overflow:'hidden',flexShrink:0}}),
+          _ce('div',{style:{fontSize:16,fontWeight:900,color:'#725d42',marginBottom:10}},'推送设置'),
+          _ce('div',{style:{display:'grid',gridTemplateColumns:'1fr auto',gap:6,alignItems:'center',marginBottom:3}},
+            _ce('div',{style:{fontSize:12,fontWeight:600,color:'#725d42',marginBottom:3}},'Webhook密钥')
+          ),
+          _ce(AI.Tooltip,{variant:'island',bordered:true,title:'在Hermes WebUI中配置的Webhook HMAC签名密钥'},
+            _ce(AI.Input,{value:f.wsec||'',onChange:e=>up('wsec',e.target.value),placeholder:'Webhook HMAC签名密钥',type:'password',style:{width:'100%'},name:'webhook_secret'})
+          ),
+          _ce('div',{style:{height:12,overflow:'hidden',flexShrink:0}}),
+          _ce('div',{style:{display:'grid',gridTemplateColumns:'1fr auto',gap:6,alignItems:'center',marginBottom:3}},
+            _ce('span',{style:{fontSize:12,fontWeight:600,color:'#725d42'}},'微信Webhook推送'),
+            _ce('div',{style:{display:'flex',justifyContent:'flex-end'}},_ce('div',{onClick:e=>tg('wx',e),style:{display:'inline-flex',cursor:'pointer',touchAction:'manipulation'}},_ce(AI.Switch,{checked:f.wx,onChange:()=>{},checkedChildren:'开',unCheckedChildren:'关'})))
+          ),
+          _ce(AI.Tooltip,{variant:'island',bordered:true,title:'在Hermes WebUI中配置的微信推送Webhook地址'},
+            _ce(AI.Input,{value:f.wh_wx||'',onChange:e=>up('wh_wx',e.target.value),placeholder:'微信推送Webhook地址',style:{width:'100%'},name:'wx_webhook'})
+          ),
+          _ce('div',{style:{fontSize:12,fontWeight:600,color:'#725d42',marginTop:4,marginBottom:3}},'微信会话ID'),
+          _ce(AI.Tooltip,{variant:'island',bordered:true,title:'这里填微信聊天会话ID'},
+            _ce(AI.Input,{value:f.wcid||'',onChange:e=>up('wcid',e.target.value),placeholder:'微信聊天会话ID',style:{width:'100%'},name:'wx_chat_id'})
+          ),
+          _ce('div',{style:{height:12,overflow:'hidden',flexShrink:0}}),
+          _ce('div',{style:{display:'grid',gridTemplateColumns:'1fr auto',gap:6,alignItems:'center',marginBottom:3}},
+            _ce('span',{style:{fontSize:12,fontWeight:600,color:'#725d42'}},'QQWebhook推送'),
+            _ce('div',{style:{display:'flex',justifyContent:'flex-end'}},_ce('div',{onClick:e=>tg('qq',e),style:{display:'inline-flex',cursor:'pointer',touchAction:'manipulation'}},_ce(AI.Switch,{checked:f.qq,onChange:()=>{},checkedChildren:'开',unCheckedChildren:'关'})))
+          ),
+          _ce(AI.Tooltip,{variant:'island',bordered:true,title:'在Hermes WebUI中配置的QQ推送Webhook地址'},
+            _ce(AI.Input,{value:f.wh_qq||'',onChange:e=>up('wh_qq',e.target.value),placeholder:'QQ推送Webhook地址',style:{width:'100%'},name:'qq_webhook'})
+          ),
+          _ce('div',{style:{fontSize:12,fontWeight:600,color:'#725d42',marginTop:4,marginBottom:3}},'QQ会话ID'),
+          _ce(AI.Tooltip,{variant:'island',bordered:true,title:'这里填QQ聊天会话ID'},
+            _ce(AI.Input,{value:f.qcid||'',onChange:e=>up('qcid',e.target.value),placeholder:'QQ聊天会话ID',style:{width:'100%'},name:'qq_chat_id'})
+          ),
+          _ce('div',{style:{height:8,overflow:'hidden',flexShrink:0}}),
+          _ce('div',{style:{height:12,overflow:'hidden',flexShrink:0}}),
+          _ce('div',{style:{display:'grid',gridTemplateColumns:'1fr auto',gap:6,alignItems:'center',marginBottom:3}},
+            _ce('span',{style:{fontSize:12,fontWeight:600,color:'#725d42'}},'邮箱推送'),
+            _ce('div',{style:{display:'flex',justifyContent:'flex-end'}},_ce('div',{onClick:e=>tg('eml',e),style:{display:'inline-flex',cursor:'pointer',touchAction:'manipulation'}},_ce(AI.Switch,{checked:f.eml,onChange:()=>{},checkedChildren:'开',unCheckedChildren:'关'})))
+          ),
+          f.eml&&_ce('div',{style:{fontSize:12,fontWeight:600,color:'#725d42',marginBottom:3}},'SMTP服务商'),
+          f.eml&&_ce(AI.Tooltip,{variant:'island',bordered:true,title:'选择SMTP邮件服务商'},
+            _ce(AI.Select,{value:f.smtp,options:sOpts,onChange:v=>{const d=smD[v];if(d){up('smtp',v);up('smtpp',d.p);up('smtps',d.s)}else up('smtp',v)},placeholder:'选择SMTP邮件服务商',style:{width:'100%'},'aria-label':'选择SMTP服务商'})
+          ),
+          f.eml&&_ce('div',{style:{height:6,overflow:'hidden',flexShrink:0}}),
+          f.eml&&_ce('div',{style:{fontSize:12,fontWeight:600,color:'#725d42',marginBottom:3}},'发件箱'),
+          f.eml&&_ce(AI.Tooltip,{variant:'island',bordered:true,title:emailTip[emailSt]||'发件邮箱地址'},
+            _ce(AI.Input,{value:f.su||'',onChange:e=>up('su',e.target.value),placeholder:'发件箱地址',status:emailSt||undefined,style:{width:'100%'},name:'sender_email'})
+          ),
+          f.eml&&_ce('div',{style:{fontSize:12,fontWeight:600,color:'#725d42',marginTop:4,marginBottom:3}},'授权码'),
+          f.eml&&_ce(AI.Tooltip,{variant:'island',bordered:true,title:'这里填邮箱SMTP授权码（非登录密码）'},
+            _ce(AI.Input,{value:f.spw||'',onChange:e=>up('spw',e.target.value),placeholder:'发件箱的SMTP授权码',type:'password',style:{width:'100%'},name:'smtp_password'})
+          ),
+          f.eml&&_ce('div',{style:{fontSize:12,fontWeight:600,color:'#725d42',marginTop:4,marginBottom:3}},'收件箱'),
+          f.eml&&_ce(AI.Tooltip,{variant:'island',bordered:true,title:emailTip2[neSt]||'收件邮箱地址'},
+            _ce(AI.Input,{value:f.ne||'',onChange:e=>up('ne',e.target.value),placeholder:'收件箱地址',status:neSt||undefined,style:{width:'100%'},name:'notify_email'})
+          ),
+          f.eml&&_ce('div',{style:{height:16,overflow:'hidden',flexShrink:0}}),
+          f.eml&&_ce(AI.Tooltip,{variant:'island',bordered:true,title:'发送测试邮件以验证SMTP配置'},
+            _ce(AI.Button,{type:'primary',block:true,onClick:te2,disabled:te,style:{fontSize:13}},te?'正在发送邮件...':'发送测试邮件')
+          ),
+          _ce('div',{style:{height:16,overflow:'hidden',flexShrink:0}}),
+          _ce('div',{style:{fontSize:14,fontWeight:900,color:'#725d42',marginBottom:16}},'其他设置'),
+          _ce('div',{style:{display:'flex',alignItems:'center',gap:8,marginBottom:10}},
+            _ce('div',{className:'tipc',style:{flex:1,justifyContent:'center',margin:0}},_ce('span',null,'下次打卡 ',_ce(AI.Typewriter,{children:ns,speed:10,trigger:ns}))),
+            _ce(AI.Tooltip,{variant:'island',bordered:true,title:'重新随机下次打卡时间'},
+              _ce('button',{style:{width:30,height:30,border:'none',background:'#f0e8d8',borderRadius:'50%',fontSize:18,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',color:'#725d42',boxShadow:'0 2px #d4c9b4',flexShrink:0},onClick:rt,disabled:rf},'↻')
+            )
+          ),
+          _ce('div',{style:{fontSize:12,fontWeight:600,color:'#725d42',marginBottom:4}},'打卡时段'),
+          _ce('div',{style:{display:'grid',gridTemplateColumns:'9fr 2fr 9fr',gap:6,alignItems:'center',marginBottom:10}},
+            _ce(AI.Tooltip,{variant:'island',bordered:true,title:'选择打卡开始时段'},
+              _ce(AI.Select,{key:'sh-'+f.sh,value:f.sh,options:hrs.map(h=>({label:h+'点',key:h})),onChange:v=>up('sh',v),columns:6,'aria-label':'选择打卡开始时段'})
+            ),
+            _ce('span',{style:{color:'#9f927d',fontSize:13,textAlign:'center'}},'至'),
+            _ce(AI.Tooltip,{variant:'island',bordered:true,title:'选择打卡结束时段'},
+              _ce(AI.Select,{key:'eh-'+f.eh,value:f.eh,options:hrs.map(h=>({label:h+'点',key:h})),onChange:v=>up('eh',v),columns:6,'aria-label':'选择打卡结束时段'})
+            )
+          ),
+          _ce('div',{style:{flex:1,minHeight:16}}),
+          _ce(AI.Tooltip,{variant:'island',bordered:true,title:'保存所有设置到配置文件'},
+            _ce(AI.Button,{type:'primary',block:true,onClick:save,disabled:sv,style:{marginTop:'auto'}},sv?'保存中...':'保存设置')
+          )
+        )
+      )
+    ),
+    _ce('audio',{ref:bgmRef,src:'assets/bgm.mp3',loop:true,preload:'auto',playsinline:true}),
+    _ce('div',{style:{position:'fixed',right:bgmPos.x,top:bgmPos.y,zIndex:9999,touchAction:'none',filter:'drop-shadow(0 2px 4px rgba(0,0,0,.2))'},onPointerDown:drStart,onClick:e=>{e.stopPropagation();tgBgm()}},
+      _ce('img',{src:'files/item-484.a961f97a.png',className:'bgm-float',style:{width:32,height:38,opacity:bgmOn?1:.5,transition:'opacity .25s',pointerEvents:'none'}})
+    ),
+    tst.s&&_ce('div',{className:'toast'},tst.m),
+    (isLd||cl)&&_ce('div',{style:{position:'fixed',inset:0,zIndex:99999,background:isLd?'#f7f3df':'',pointerEvents:'none'}},_ce(AI.Loading,{active:!cl}))
+  )
+  );
+}
+createRoot(document.getElementById('root')).render(_ce(App));
+</script>
+</body>
+</html>

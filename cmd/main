@@ -1,0 +1,69 @@
+#!/bin/bash
+# 飞牛论坛打卡 - 启停控制脚本
+APP_DIR="${TRIM_APPDEST}/server"
+PID_FILE="${TRIM_PKGTMP}/app.pid"
+LOG_FILE="${TRIM_PKGTMP}/app.log"
+PORT_FILE="${TRIM_PKGVAR}/port.txt"
+
+case "$1" in
+    start)
+        cd "$APP_DIR" || {
+            echo "❌ 目录不存在: $APP_DIR" > "${TRIM_TEMP_LOGFILE}"
+            exit 1
+        }
+
+        # 读取自定义端口
+        if [ -f "$PORT_FILE" ]; then
+            PORT=$(cat "$PORT_FILE")
+        else
+            PORT=7654
+        fi
+
+        echo "启动飞牛论坛打卡 (端口: $PORT)..." > "${TRIM_TEMP_LOGFILE}"
+        nohup python3 app.py > "$LOG_FILE" 2>&1 &
+        PID=$!
+        echo $PID > "$PID_FILE"
+
+        # 等待启动（最多等15秒）
+        for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+            if kill -0 $PID 2>/dev/null; then
+                if curl -s "http://127.0.0.1:$PORT/api/status" > /dev/null 2>&1; then
+                    echo "✅ 服务启动成功 (端口: $PORT, PID: $PID)" > "${TRIM_TEMP_LOGFILE}"
+                    exit 0
+                fi
+            fi
+            sleep 1
+        done
+
+        echo "⚠️ 启动超时，请查看日志: $LOG_FILE" > "${TRIM_TEMP_LOGFILE}"
+        # 检查是否是端口占用
+        if ss -tlnp 2>/dev/null | grep -q ":$PORT "; then
+            echo "❌ 端口 $PORT 已被占用！请在应用设置中修改端口" >> "${TRIM_TEMP_LOGFILE}"
+        fi
+        exit 1
+        ;;
+    stop)
+        if [ -f "$PID_FILE" ]; then
+            PID=$(cat "$PID_FILE" | tr -d '[:space:]')
+            kill $PID 2>/dev/null
+            sleep 2
+            kill -0 $PID 2>/dev/null && kill -9 $PID 2>/dev/null || true
+            rm -f "$PID_FILE"
+        fi
+        exit 0
+        ;;
+    status)
+        if [ -f "$PID_FILE" ]; then
+            PID=$(cat "$PID_FILE" | tr -d '[:space:]')
+            if [ -n "$PID" ] && kill -0 "$PID" 2>/dev/null; then
+                exit 0
+            fi
+            rm -f "$PID_FILE"
+        fi
+        exit 3
+        ;;
+    *)
+        echo "用法: $0 {start|stop|status}"
+        exit 1
+        ;;
+esac

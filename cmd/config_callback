@@ -1,0 +1,11 @@
+#!/bin/bash
+# 配置变更后：通知后端重载
+PORT_FILE="${TRIM_PKGVAR}/port.txt"
+if [ -f "$PORT_FILE" ]; then
+    PORT=$(cat "$PORT_FILE")
+else
+    PORT=7654
+fi
+
+curl -s -X POST "http://127.0.0.1:$PORT/api/reload" > /dev/null 2>&1 || true
+exit 0

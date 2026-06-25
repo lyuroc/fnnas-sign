@@ -1,0 +1,21 @@
+{
+  "data-share": {
+    "shares": []
+  },
+  "data-controller": {
+    "controllers": [
+      {
+        "type": "link",
+        "label": "打开管理界面",
+        "icon": "link",
+        "url": "http://localhost:{{TRIM_SERVICE_PORT}}"
+      },
+      {
+        "type": "link",
+        "label": "访问飞牛论坛",
+        "icon": "link",
+        "url": "https://club.fnnas.com"
+      }
+    ]
+  }
+}

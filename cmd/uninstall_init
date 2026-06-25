@@ -1,0 +1,9 @@
+#!/bin/bash
+# 卸载前：停止服务
+if [ -f "${TRIM_PKGTMP}/app.pid" ]; then
+    PID=$(cat "${TRIM_PKGTMP}/app.pid" | tr -d '[:space:]')
+    kill $PID 2>/dev/null || true
+    sleep 1
+fi
+echo "数据已保留在 ${TRIM_PKGVAR}" > "${TRIM_TEMP_LOGFILE}"
+exit 0
